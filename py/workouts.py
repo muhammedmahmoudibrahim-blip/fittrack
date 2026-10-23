@@ -382,6 +382,62 @@ def build_program(goal, level, strength_days, equip, injuries, light_only=False,
     return dict(days=days, warmup=mob(WARMUP), cooldown=mob(COOLDOWN), cardio_minutes=cmin)
 
 
+def apply_plan(prog, plan, equip, injuries, goal, level, light):
+    """Overlay a coach-written plan (coach-plans.json) onto the default weekly program.
+
+    plan["days"] maps "Mon".."Sun" to {"type": strength|cardio|recovery|rest, "title": str,
+    "exercises": [{"key", "sets", "reps", "rest", "weight_kg", "minutes", "note"}]}.
+    Days that the plan does not list become rest days. Exercise cards (cues, animations,
+    alternatives) still come from the built-in library, so swapping and logging keep working.
+    """
+    pdays = plan.get("days") or {}
+    equip, injuries = set(equip), set(injuries)
+    days = []
+    for i, base in enumerate(prog["days"]):
+        pd = pdays.get(DOW[i]) or pdays.get(str(i))
+        entry = dict(dow=base["dow"], index=i, full=base["full"])
+        if not pd:
+            entry.update(type="rest", title="Rest & easy walk", exercises=[], session_key=f"r{i}")
+            days.append(entry)
+            continue
+        typ = pd.get("type") or ("strength" if pd.get("exercises") else "rest")
+        if typ in ("rest", "recovery"):
+            entry.update(type=typ, title=pd.get("title") or ("Rest & easy walk" if typ == "rest" else "Active recovery"),
+                         exercises=[], session_key=f"{'r' if typ == 'rest' else 'a'}{i}")
+            days.append(entry)
+            continue
+        cards = []
+        for it in pd.get("exercises") or []:
+            k = it.get("key")
+            if k not in EX:
+                continue
+            c = card(k, equip, injuries, goal, level, light, equip_all=equip)
+            if typ == "strength":
+                if it.get("sets") is not None:
+                    c["sets"] = int(it["sets"])
+                if it.get("reps"):
+                    c["reps"] = str(it["reps"])
+                if it.get("rest") is not None:
+                    c["rest"] = int(it["rest"])
+            if it.get("minutes"):
+                c["minutes"] = str(it["minutes"])
+            if it.get("weight_kg") is not None:
+                c["coach_weight"] = it["weight_kg"]
+            if it.get("note"):
+                c["coach_note"] = str(it["note"])
+            cards.append(c)
+        if typ == "cardio" and not cards:
+            c = card("brisk_walk", equip, injuries, goal, level, light, equip_all=equip)
+            c["minutes"] = str(pd.get("minutes") or "30 min")
+            cards.append(c)
+        entry.update(type=typ, title=pd.get("title") or ("Cardio" if typ == "cardio" else "Strength"),
+                     exercises=cards, session_key=f"{'c' if typ == 'cardio' else 's'}{i}")
+        days.append(entry)
+    out = dict(prog)
+    out["days"] = days
+    return out
+
+
 def parse_top_reps(reps_text):
     """Upper bound from a prescription such as '8–12' or '12–15'."""
     import re

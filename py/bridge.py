@@ -35,7 +35,14 @@ def constants():
                            allergens=planner.ALLERGENS, dow=workouts.DOW))
 
 
-def program(profile_json, goal_key, light_only, missing_json, swaps_json, dow):
+def _overlay(prog, plan_json, p, goal_key, light_only, equip, inj):
+    if not plan_json:
+        return prog
+    return workouts.apply_plan(prog, json.loads(plan_json), equip, inj, goal_key, p.get("level") or "beginner",
+                               bool(light_only))
+
+
+def program(profile_json, goal_key, light_only, missing_json, swaps_json, dow, plan_json=""):
     p = json.loads(profile_json)
     missing = [m for m in json.loads(missing_json) if m in workouts.EQUIPMENT]
     equip_all = engine.csv(p.get("equipment"))
@@ -43,8 +50,9 @@ def program(profile_json, goal_key, light_only, missing_json, swaps_json, dow):
     level = p.get("level") or "beginner"
     prog = workouts.build_program(goal_key, level, int(p.get("strength_days") or 3), equip_all, inj,
                                   light_only=bool(light_only), missing=missing)
-    day = prog["days"][int(dow)]
     equip = set(equip_all) - set(missing)
+    prog = _overlay(prog, plan_json, p, goal_key, light_only, equip, inj)
+    day = prog["days"][int(dow)]
     for sw in json.loads(swaps_json):
         if ">" in sw:
             o, a = sw.split(">", 1)
@@ -58,10 +66,12 @@ def program(profile_json, goal_key, light_only, missing_json, swaps_json, dow):
     return json.dumps(dict(prog=prog, day=day))
 
 
-def week_summary(profile_json, goal_key, light_only):
+def week_summary(profile_json, goal_key, light_only, plan_json=""):
     p = json.loads(profile_json)
+    equip, inj = engine.csv(p.get("equipment")), engine.csv(p.get("injuries"))
     prog = workouts.build_program(goal_key, p.get("level") or "beginner", int(p.get("strength_days") or 3),
-                                  engine.csv(p.get("equipment")), engine.csv(p.get("injuries")), light_only=bool(light_only))
+                                  equip, inj, light_only=bool(light_only))
+    prog = _overlay(prog, plan_json, p, goal_key, light_only, equip, inj)
     return json.dumps(prog)
 
 

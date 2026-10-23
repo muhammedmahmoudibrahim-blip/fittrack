@@ -21,6 +21,19 @@ function load(){try{S=JSON.parse(localStorage.getItem(KEY))}catch(e){}
 const save=()=>localStorage.setItem(KEY,JSON.stringify(S));
 const U=()=>S.users[S.cur];
 
+// ---------- coach plan (written by Claude each month, served from coach-plans.json) ----------
+const PKEY='fittrack.coachplans.v1';let PLANS=null;
+try{PLANS=JSON.parse(localStorage.getItem(PKEY))}catch(e){}
+const myPlan=()=>{if(!PLANS||!PLANS.plans)return null;const n=String(S.cur).trim().toLowerCase(),k=Object.keys(PLANS.plans).find(x=>x.trim().toLowerCase()===n);return k?PLANS.plans[k]:null};
+const planJ=()=>{const p=myPlan();return p?JSON.stringify(p):''};
+async function fetchPlans(){try{const r=await fetch('coach-plans.json?t='+Date.now(),{cache:'no-store'});if(!r.ok)return;const t=await r.text(),j=JSON.parse(t);
+  if(!j||!j.plans)return;if(JSON.stringify(PLANS)===JSON.stringify(j))return;PLANS=j;try{localStorage.setItem(PKEY,JSON.stringify(j))}catch(e){}
+  if(!/INPUT|TEXTAREA|SELECT/.test((document.activeElement||{}).tagName||''))route()}catch(e){}}
+function planCard(open){const p=myPlan();if(!p)return'';const late=p.valid_to&&iso()>p.valid_to;
+  return `<div class="card soft"><div class="row between"><b>🧭 Coach plan: ${esc(p.title||p.id||'current block')}</b>${p.valid_to?`<span class="small muted">until ${esc(p.valid_to)}</span>`:''}</div>
+   ${late?`<div class="banner" style="margin:8px 0 0">This plan has ended. On the Coach tab, copy your monthly report and send it to Claude for the next block.</div>`:''}
+   ${p.notes?`<details ${open?'open':''} style="margin-top:6px"><summary class="small">Coach's notes for this block</summary><div class="small" style="white-space:pre-line;margin-top:6px">${esc(p.notes)}</div></details>`:''}</div>`}
+
 // ---------- context ----------
 function ctx(){const u=U(),rep=u.reports.length?[...u.reports].sort((a,b)=>a.report_date<b.report_date?-1:1).pop():null;
   const since=addDays(iso(),-7),steps=Object.entries(u.checkins).filter(([d,c])=>d>=since&&c.steps!=null).map(([d,c])=>c.steps);
@@ -57,11 +70,11 @@ function vHome(){const c=ctx();
     meals=`<div class="card"><div class="row between"><h2>Today's meals</h2><a href="#/food" class="small">Full plan</a></div>`+day.meals.map(m=>
       `<div class="row between meal"><div><b>${esc(m.label)}</b><div>${esc(m.name)}</div><div class="macros">${m.kcal} kcal · ${m.p} g protein</div></div>
       <button class="${ticks.includes(m.slot)?'':'secondary'} small" data-tick="${m.slot}">${ticks.includes(m.slot)?'✓ Eaten':'Mark eaten'}</button></div>`).join('')+'</div>'}
-  const prog=J('week_summary',JSON.stringify(u.profile),c.goal.key,c.safety.light_only),td=prog.days[d];
+  const prog=J('week_summary',JSON.stringify(u.profile),c.goal.key,c.safety.light_only,planJ()),td=prog.days[d];
   page('home',banners(c)+`<div class="hero"><div class="muted small">Your goal, from your report of ${esc(c.report.report_date)}</div><h2>${esc(c.goal.label)}</h2><div class="small">${esc(c.goal.reasons[0])}</div></div>`+
    (t?`<div class="card"><h2>Today's targets</h2><div class="grid g3"><div class="stat"><b>${t.kcal}</b><span>kcal</span></div><div class="stat"><b>${t.protein} g</b><span>protein</span></div><div class="stat"><b>${t.steps_target}</b><span>steps</span></div></div>
    <p class="muted small" style="margin:8px 0 0">Eaten so far: ${eat.kcal} kcal, ${eat.p} g protein.</p></div>`:'')+meals+
-   `<div class="card"><h2>Today: ${esc(td.title)}</h2><a class="btn" href="#/train/${d}">Open today's session</a></div>
+   planCard(false)+`<div class="card"><h2>Today: ${esc(td.title)}</h2><a class="btn" href="#/train/${d}">Open today's session</a></div>
    <div class="card"><a class="btn secondary" href="#/checkin">Log today's weight, steps, water, sleep</a></div>`);
   app.querySelectorAll('[data-tick]').forEach(b=>b.onclick=()=>tick(b.dataset.tick))}
 function tick(slot){const u=U(),t=iso(),a=u.meal_checks[t]||(u.meal_checks[t]=[]);const i=a.indexOf(slot);i<0?a.push(slot):a.splice(i,1);save();route()}
@@ -89,19 +102,19 @@ function vShop(){const c=ctx();if(needSetup(c))return route();const plan=ensureP
   const g=plan?J('shopping',JSON.stringify(plan)):[];
   page('food',`<div class="row between"><h1>Shopping list</h1><a class="small" href="#/food">Back</a></div>`+g.map(([a,items])=>`<div class="card"><h2>${esc(a)}</h2>${items.map(i=>`<div class="row between"><span>${esc(i.name)}${i.note?` <span class="muted small">(${esc(i.note)})</span>`:''}</span><b>${esc(i.text)}</b></div>`).join('')}</div>`).join('')||'<div class="card">No plan yet.</div>')}
 
-function vTrain(){const c=ctx();if(needSetup(c))return route();const prog=J('week_summary',JSON.stringify(U().profile),c.goal.key,c.safety.light_only);
+function vTrain(){const c=ctx();if(needSetup(c))return route();const prog=J('week_summary',JSON.stringify(U().profile),c.goal.key,c.safety.light_only,planJ());
   const ws=addDays(iso(),-dowToday()),done=new Set(U().logs.filter(l=>l.day>=ws).map(l=>(new Date(l.day+'T12:00:00').getDay()+6)%7));
-  page('train',`<h1>This week</h1>`+banners(c)+prog.days.map(d=>`<a href="#/train/${d.index}" style="text-decoration:none;color:inherit"><div class="card"><div class="row between"><div><b>${d.full}${d.index===dowToday()?' · today':''}</b><div>${esc(d.title)}</div>
+  page('train',`<h1>This week</h1>`+banners(c)+planCard(true)+prog.days.map(d=>`<a href="#/train/${d.index}" style="text-decoration:none;color:inherit"><div class="card"><div class="row between"><div><b>${d.full}${d.index===dowToday()?' · today':''}</b><div>${esc(d.title)}</div>
    ${d.type==='strength'?`<div class="small muted">${d.exercises.map(e=>esc(e.name)).join(' · ')}</div>`:d.type==='cardio'?`<div class="small muted">${esc(d.exercises[0].name)} · ${esc(d.minutes||d.exercises[0].minutes)}</div>`:''}</div>${done.has(d.index)?'<span class="pill">✓ done</span>':''}</div></div></a>`).join(''))}
 
 const MISSING={};let SWAPS={};
 function vDay(dow){const c=ctx();if(needSetup(c))return route();const u=U(),miss=MISSING.v||[];
-  const r=J('program',JSON.stringify(u.profile),c.goal.key,c.safety.light_only,JSON.stringify(miss),JSON.stringify(SWAPS[dow]||[]),dow),day=r.day,prog=r.prog,today=iso();
+  const r=J('program',JSON.stringify(u.profile),c.goal.key,c.safety.light_only,JSON.stringify(miss),JSON.stringify(SWAPS[dow]||[]),dow,planJ()),day=r.day,prog=r.prog,today=iso();
   const myEq=(u.profile.equipment||'').split(',').filter(Boolean),eq=Object.fromEntries(K.equipment);
   const last=k=>[...u.logs].filter(l=>l.exercise_key===k&&l.day<today).sort((a,b)=>a.day<b.day?-1:1).pop();
   const logged=Object.fromEntries(u.logs.filter(l=>l.day===today&&l.session_key===day.session_key).map(l=>[l.exercise_key,l]));
   const isToday=dow===dowToday();
-  let h=`<div class="row between"><h1>${esc(day.full)}: ${esc(day.title)}</h1><a href="#/train" class="small">All days</a></div>`+banners(c);
+  let h=`<div class="row between"><h1>${esc(day.full)}: ${esc(day.title)}</h1><a href="#/train" class="small">All days</a></div>`+banners(c)+planCard(false);
   if(day.type==='rest'||day.type==='recovery'){
     h+=`<div class="card"><p>${day.type==='rest'?'Rest day. Take an easy 20–30 minute walk, stretch, and sleep well.':'Active recovery: a 20–30 minute walk plus the desk-reset routine below. No weights today.'}</p></div>
     <div class="card"><h2>Desk reset (5 min)</h2>${prog.warmup.map(x=>`<div class="ex"><div class="nm">${esc(x.name)}</div><div class="small muted">${esc(x.cue)}</div></div>`).join('')}</div>`;return page('train',h)}
@@ -113,7 +126,7 @@ function vDay(dow){const c=ctx();if(needSetup(c))return route();const u=U(),miss
     return `<div class="ex"><input type="hidden" name="ex" value="${ex.key}"><div class="nm">${i+1}. ${esc(ex.name)}</div><div class="small muted">${esc(ex.muscles)}</div>
     ${cardio?'':demo(ex)}
     ${ex.swapped_from?`<div class="small"><span class="pill warn">Swapped</span> instead of ${esc(ex.swapped_from)}</div>`:''}
-    <div class="small">${cardio?`Target: <b>${esc(day.exercises[0].minutes||'')}</b> at a pace where you can still talk.`:`Target: <b>${ex.sets} × ${esc(ex.reps)}</b> · rest ${ex.rest} s`}</div><div class="small">${esc(ex.cue)}</div>
+    <div class="small">${cardio?`Target: <b>${esc(day.exercises[0].minutes||'')}</b> at a pace where you can still talk.`:`Target: <b>${ex.sets} × ${esc(ex.reps)}</b> · rest ${ex.rest} s`}${ex.coach_weight!=null&&!cardio?` · Coach target: <b>${esc(ex.coach_weight)} kg</b>`:''}</div>${ex.coach_note?`<div class="small" style="color:var(--accent)">🧭 ${esc(ex.coach_note)}</div>`:''}<div class="small">${esc(ex.cue)}</div>
     ${lg?`<div class="small muted">Last time: ${lg.sets||'–'} sets · ${esc(lg.reps||'–')}${lg.weight_kg?` @ ${lg.weight_kg} kg`:''} (${lg.day})</div>`:''}${hint?`<div class="small" style="color:var(--accent)">💡 ${esc(hint)}</div>`:''}
     <div class="fields">${cardio?`<div><label>Minutes done</label><input type="text" name="reps_${ex.key}" inputmode="numeric" value="${esc(lo?lo.reps:'')}"></div>`:
      `<div><label>Sets done</label><input type="number" min="0" max="20" name="sets_${ex.key}" value="${lo&&lo.sets!=null?lo.sets:''}"></div><div><label>Reps (10,10,9)</label><input type="text" name="reps_${ex.key}" value="${esc(lo?lo.reps:'')}"></div>
@@ -159,11 +172,12 @@ function vCheckin(){const t=iso(),c=U().checkins[t]||{};
 function vCoach(){const c=ctx();if(needSetup(c))return route();const u=U(),today=iso(),s21=addDays(today,-21),s7=addDays(today,-7);
   const wp=[...Object.entries(u.checkins).filter(([d,k])=>d>=s21&&k.weight_kg!=null).map(([d,k])=>[d,k.weight_kg]),...u.reports.filter(r=>r.report_date>=s21).map(r=>[r.report_date,r.weight_kg])];
   const l7=Object.entries(u.checkins).filter(([d])=>d>=s7).map(([d,k])=>k),col=k=>l7.map(x=>x[k]).filter(v=>v!=null);
-  const done=new Set(u.logs.filter(l=>l.day>=s7).map(l=>l.day)).size,prog=J('week_summary',JSON.stringify(u.profile),c.goal.key,c.safety.light_only),planned=prog.days.filter(d=>d.type==='strength'||d.type==='cardio').length;
+  const done=new Set(u.logs.filter(l=>l.day>=s7).map(l=>l.day)).size,prog=J('week_summary',JSON.stringify(u.profile),c.goal.key,c.safety.light_only,planJ()),planned=prog.days.filter(d=>d.type==='strength'||d.type==='cardio').length;
   const ticked=Object.entries(u.meal_checks).filter(([d])=>d>=s7).reduce((a,[d,v])=>a+v.length,0),mpd=+u.profile.meals_per_day||4;
   const msgs=J('review',c.goal.key,c.targets?JSON.stringify(c.targets):'',JSON.stringify(wp),JSON.stringify(col('steps')),JSON.stringify(col('water_ml')),JSON.stringify(col('sleep_h')),done,planned,ticked,ticked?mpd*7:0,c.report.report_date,today);
   page('coach',`<h1>Weekly coach</h1>`+banners(c)+msgs.map(m=>`<div class="card"><h2>${m.level==='good'?'✅ ':m.level==='warn'?'⚠️ ':'ℹ️ '}${esc(m.title)}</h2><p>${esc(m.text)}</p>${m.adjust?`<button data-adj="${m.adjust}">Apply ${m.adjust>0?'+':''}${m.adjust} kcal a day</button>`:''}</div>`).join('')+
-   `<div class="card soft small">For a deeper monthly review, export your log in Me → Backup and paste it to Claude.</div>`);
+   planCard(true)+`<div class="card"><h2>Monthly review with Claude</h2><p class="small muted">Once a month, copy your report and paste it into your chat with Claude. Claude writes your next 4-week plan and it appears here and under Train the next time you open the app online.</p><button id="mr">Copy my monthly report</button></div>`);
+  $('#mr').onclick=()=>{const t=logText();(navigator.clipboard?navigator.clipboard.writeText(t):Promise.reject()).then(()=>alert('Copied. Paste it to Claude.'),()=>prompt('Copy this report:',t))};
   app.querySelectorAll('[data-adj]').forEach(b=>b.onclick=()=>{const p=u.profile;p.kcal_adjust=Math.max(-300,Math.min(300,(p.kcal_adjust||0)+ +b.dataset.adj));save();flash='Calories adjusted. A new meal plan was created.';route()})}
 
 const RF=[['weight_kg','Weight (kg)',30,300,1],['body_fat_pct','Body fat (%)',3,70,1],['muscle_kg','Skeletal muscle mass (kg)',10,80,0],['visceral_level','Visceral fat level',1,30,0],['body_water_pct','Body water (%)',30,80,0],['bmr_kcal','BMR from the scan (kcal)',800,4000,0],['waist_cm','Waist (cm)',40,200,0],['hip_cm','Hip (cm)',50,200,0],['chest_cm','Chest (cm)',50,200,0],['arm_cm','Arm (cm)',15,70,0],['thigh_cm','Thigh (cm)',25,100,0]];
@@ -204,10 +218,15 @@ function vMe(){const u=U(),p=u.profile,sc=new Set((p.conditions||'').split(','))
   $('#bk').onclick=()=>{const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(S)],{type:'application/json'}));a.download='fittrack-backup.json';a.click()};
   $('#cp').onclick=()=>{const t=logText();(navigator.clipboard?navigator.clipboard.writeText(t):Promise.reject()).then(()=>alert('Copied. Paste it to Claude.'),()=>prompt('Copy this log:',t))};
   $('#im').onchange=e=>{const f=e.target.files[0];if(f)f.text().then(t=>{S=JSON.parse(t);save();route()})}}
-function logText(){const u=U(),L=[`Training log for ${S.cur} (exported ${iso()})`];const r=[...u.reports].sort((a,b)=>a.report_date<b.report_date?-1:1).pop();
-  if(r)L.push(`Latest body report ${r.report_date}: ${r.weight_kg} kg, ${r.body_fat_pct}% fat${r.muscle_kg?`, muscle ${r.muscle_kg} kg`:''}`);
+function logText(){const u=U(),p=u.profile,today=iso(),L=[`Monthly report for ${S.cur} (exported ${today})`];
+  const pl=myPlan();L.push('Current coach plan: '+(pl?`${pl.id||pl.title||'unnamed'}${pl.valid_to?' (until '+pl.valid_to+')':''}`:'none yet (built-in program)'));
+  L.push(`Profile: ${p.sex||'?'}, born ${p.birth_date||'?'}, ${p.height_cm||'?'} cm, level ${p.level||'beginner'}, ${p.strength_days||3} strength days/week, activity ${p.activity||'?'}; equipment: ${p.equipment||'none'}; injuries: ${p.injuries||'none'}; conditions: ${p.conditions||'none'}`);
+  const r=[...u.reports].sort((a,b)=>a.report_date<b.report_date?-1:1).slice(-3);
+  r.forEach(x=>L.push(`Body report ${x.report_date}: ${x.weight_kg} kg, ${x.body_fat_pct}% fat${x.muscle_kg?`, muscle ${x.muscle_kg} kg`:''}${x.visceral_level?`, visceral ${x.visceral_level}`:''}${x.waist_cm?`, waist ${x.waist_cm} cm`:''}`));
   const w=Object.entries(u.checkins).filter(([d,k])=>k.weight_kg).sort().slice(-12).map(([d,k])=>`${d}:${k.weight_kg}`);if(w.length)L.push('Weights: '+w.join(', '));
-  const byDay={};u.logs.slice(-120).forEach(l=>(byDay[l.day]=byDay[l.day]||[]).push(`${l.exercise_name} ${l.sets||'?'}x[${l.reps||'?'}]@${l.weight_kg||0}kg`));
+  const s28=addDays(today,-28),ci=Object.entries(u.checkins).filter(([d])=>d>=s28).map(([d,k])=>k),avg=k=>{const v=ci.map(x=>x[k]).filter(x=>x!=null);return v.length?Math.round(v.reduce((a,b)=>a+b,0)/v.length*10)/10:'n/a'};
+  L.push(`Last 28 days averages: steps ${avg('steps')}, sleep ${avg('sleep_h')} h, water ${avg('water_ml')} ml; ${new Set(u.logs.filter(l=>l.day>=s28).map(l=>l.day)).size} workout days logged`);
+  const byDay={};u.logs.filter(l=>l.day>=addDays(today,-42)).forEach(l=>(byDay[l.day]=byDay[l.day]||[]).push(`${l.exercise_name} ${l.sets||'?'}x[${l.reps||'?'}]@${l.weight_kg||0}kg`));
   Object.keys(byDay).sort().forEach(d=>L.push(d+': '+byDay[d].join(' | ')));return L.join('\n')}
 
 // ---------- router ----------
@@ -220,6 +239,6 @@ async function boot(){load();
   try{py=await loadPyodide({indexURL:new URL('pyodide/',location.href).href});py.FS.mkdirTree('/app');
     for(const m of PYFILES){const t=await (await fetch(`py/${m}.py`)).text();py.FS.writeFile(`/app/${m}.py`,t)}
     py.runPython("import sys; sys.path.insert(0,'/app'); import bridge");B=py.pyimport('bridge');K=JSON.parse(B.constants());
-    route()}catch(e){app.innerHTML=`<div class="card"><h2>Couldn't start</h2><p>The trainer engine needs an internet connection the first time. Check your connection and reload.</p><pre class="small">${esc(e.message||e)}</pre></div>`}}
+    route();fetchPlans()}catch(e){app.innerHTML=`<div class="card"><h2>Couldn't start</h2><p>The trainer engine needs an internet connection the first time. Check your connection and reload.</p><pre class="small">${esc(e.message||e)}</pre></div>`}}
 boot();
 if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});
