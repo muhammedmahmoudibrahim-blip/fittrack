@@ -39,5 +39,19 @@
  "single_leg_bridge": "Single Leg Glute Bridge",
  "split_squat": "Split Squats",
  "step_up": "Dumbbell Step Ups",
- "triceps_pushdown": "Triceps Pushdown"
+ "triceps_pushdown": "Triceps Pushdown",
+ "band_chest_press": "original drawing (tools/make_anim.py)",
+ "band_curl": "original drawing (tools/make_anim.py)",
+ "band_lateral_raise": "original drawing (tools/make_anim.py)",
+ "band_pull_through": "original drawing (tools/make_anim.py)",
+ "band_pulldown": "original drawing (tools/make_anim.py)",
+ "band_pushdown": "original drawing (tools/make_anim.py)",
+ "band_row": "original drawing (tools/make_anim.py)",
+ "bird_dog": "original drawing (tools/make_anim.py)",
+ "chin_tuck": "original drawing (tools/make_anim.py)",
+ "hamstring_walkout": "original drawing (tools/make_anim.py)",
+ "prone_ytw": "original drawing (tools/make_anim.py)",
+ "towel_curl": "original drawing (tools/make_anim.py)",
+ "wall_angel": "original drawing (tools/make_anim.py)",
+ "wall_sit": "original drawing (tools/make_anim.py)"
 }
