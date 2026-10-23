@@ -10,3 +10,7 @@ equipment-aware workouts, weekly coach) runs unchanged in Python via Pyodide. Ex
 - General fitness guidance, not medical advice.
 
 Local test: `python3 -m http.server` in this folder, then open http://localhost:8000
+
+## Exercise animations
+Each exercise shows a looping animation made from the start and end photos in the public-domain
+[Free Exercise DB](https://github.com/yuhonas/free-exercise-db) (Unlicense). Exercises without a matching photo keep a video link.

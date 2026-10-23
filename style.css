@@ -74,3 +74,5 @@ th{font-size:.78rem;color:var(--muted);font-weight:600}.tablewrap{overflow-x:aut
 .hero{background:linear-gradient(135deg,var(--accent),#115e59);color:#fff;border-radius:var(--radius);padding:18px;margin:0 0 14px}
 .hero h2{color:#fff}.hero .muted{color:#d5f2ec}
 @media (prefers-color-scheme:dark){.hero{background:linear-gradient(135deg,#115e59,#0f3d38)}}
+
+img.demo{display:block;width:100%;max-width:360px;height:auto;border-radius:10px;margin:6px 0 2px;background:#111}

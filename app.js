@@ -7,6 +7,8 @@ const iso=d=>{const x=d||new Date();return x.getFullYear()+'-'+String(x.getMonth
 const addDays=(s,n)=>{const d=new Date(s+'T12:00:00');d.setDate(d.getDate()+n);return iso(d)};
 const dowToday=()=>(new Date().getDay()+6)%7;
 const yt=n=>'https://www.youtube.com/results?search_query='+encodeURIComponent(n.replace(/\s*\(.*?\)/g,'').trim()+' proper form tutorial');
+const ANIM=new Set(["back_squat", "band_face_pull", "bench_dip", "bench_press", "biceps_curl", "box_squat", "calf_raise", "cat_cow", "chest_press", "close_push_up", "db_bench", "db_rdl", "db_row", "db_shoulder_press", "dead_bug", "face_pull", "floor_press", "glute_bridge", "goblet_squat", "hanging_knee_raise", "hip_flexor_stretch", "hip_thrust_db", "incline_push_up", "lat_pulldown", "lateral_raise", "leg_curl", "leg_extension", "leg_press", "overhead_press", "pallof_press", "plank", "pull_up", "push_up", "reverse_crunch", "romanian_deadlift", "seated_row", "side_plank", "single_leg_bridge", "split_squat", "step_up", "triceps_pushdown"]);
+const demo=ex=>ANIM.has(ex.key)?`<img class="demo" src="anim/${ex.key}.gif" alt="How to do ${esc(ex.name)}" loading="lazy" width="360"><div class="small muted">Animation alternates the start and end position.</div>`:`<div class="small"><a href="${yt(ex.name)}" target="_blank" rel="noopener">▶ Watch how to do it (video)</a></div>`;
 let py,B,K,S,flash='';
 const call=(fn,...a)=>{const r=B[fn](...a);return r};
 const J=(fn,...a)=>JSON.parse(call(fn,...a));
@@ -37,7 +39,7 @@ const go=h=>{location.hash=h};
 const banners=c=>c.safety.warnings.map(w=>`<div class="banner">${esc(w)}</div>`).join('');
 const bar=(v,t,cls)=>`<div class="bar ${cls||''}"><i style="width:${Math.min(100,t?Math.round(v/t*100):0)}%"></i></div>`;
 function page(k,html){const f=flash?`<div class="flash warn">${esc(flash)}</div>`:'';flash='';
-  app.innerHTML=f+html+'<p class="muted small center" style="margin-top:24px">FitTrack gives general fitness and nutrition guidance, not medical advice.</p>';
+  app.innerHTML=f+html+'<p class="muted small center" style="margin-top:24px">FitTrack gives general fitness and nutrition guidance, not medical advice.<br>Exercise photos: Free Exercise DB (public domain).</p>';
   $('#tabs').hidden=false;document.querySelectorAll('#tabs a').forEach(a=>a.classList.toggle('on',a.dataset.k===k));
   $('#who').innerHTML=Object.keys(S.users).map(n=>`<option ${n===S.cur?'selected':''}>${esc(n)}</option>`).join('');
   $('#who').innerHTML=`<select id="usel" style="width:auto;padding:4px 8px">${$('#who').innerHTML}</select>`;
@@ -109,7 +111,7 @@ function vDay(dow){const c=ctx();if(needSetup(c))return route();const u=U(),miss
   h+=`<form id="wf" class="card">`+day.exercises.map((ex,i)=>{const lg=last(ex.key),lo=logged[ex.key],cardio=day.type==='cardio';
     const hint=lg&&ex.reps?B.hint(lg.reps,lg.weight_kg,ex.reps):null;
     return `<div class="ex"><input type="hidden" name="ex" value="${ex.key}"><div class="nm">${i+1}. ${esc(ex.name)}</div><div class="small muted">${esc(ex.muscles)}</div>
-    ${cardio?'':`<div class="small"><a href="${yt(ex.name)}" target="_blank" rel="noopener">▶ Watch how to do it</a></div>`}
+    ${cardio?'':demo(ex)}
     ${ex.swapped_from?`<div class="small"><span class="pill warn">Swapped</span> instead of ${esc(ex.swapped_from)}</div>`:''}
     <div class="small">${cardio?`Target: <b>${esc(day.exercises[0].minutes||'')}</b> at a pace where you can still talk.`:`Target: <b>${ex.sets} × ${esc(ex.reps)}</b> · rest ${ex.rest} s`}</div><div class="small">${esc(ex.cue)}</div>
     ${lg?`<div class="small muted">Last time: ${lg.sets||'–'} sets · ${esc(lg.reps||'–')}${lg.weight_kg?` @ ${lg.weight_kg} kg`:''} (${lg.day})</div>`:''}${hint?`<div class="small" style="color:var(--accent)">💡 ${esc(hint)}</div>`:''}
