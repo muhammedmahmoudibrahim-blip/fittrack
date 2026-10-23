@@ -215,7 +215,7 @@ function route(){if(!B)return;const [path,qs]=(location.hash||'#/').slice(1).spl
 window.addEventListener('hashchange',route);
 
 async function boot(){load();
-  try{py=await loadPyodide();py.FS.mkdirTree('/app');
+  try{py=await loadPyodide({indexURL:new URL('pyodide/',location.href).href});py.FS.mkdirTree('/app');
     for(const m of PYFILES){const t=await (await fetch(`py/${m}.py`)).text();py.FS.writeFile(`/app/${m}.py`,t)}
     py.runPython("import sys; sys.path.insert(0,'/app'); import bridge");B=py.pyimport('bridge');K=JSON.parse(B.constants());
     route()}catch(e){app.innerHTML=`<div class="card"><h2>Couldn't start</h2><p>The trainer engine needs an internet connection the first time. Check your connection and reload.</p><pre class="small">${esc(e.message||e)}</pre></div>`}}
