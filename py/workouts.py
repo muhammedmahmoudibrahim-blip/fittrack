@@ -33,6 +33,8 @@ E("box_squat", "Squat to a chair (bodyweight)", "squat", [], [], "Quads, glutes"
   "Sit back to a chair, touch lightly, stand up. Use a higher seat if the knees complain.")
 E("split_squat", "Split squat (bodyweight)", "squat", [], ["knee", "hip"], "Quads, glutes",
   "Long stance, drop the back knee straight down, keep the front heel planted.")
+E("walking_lunge", "Walking lunge", "squat", [], ["knee", "hip"], "Quads, glutes",
+  "Long steps, lower the back knee toward the floor, push through the front heel. Hold dumbbells once it feels easy.")
 E("step_up", "Step-up (sturdy step)", "squat", [], ["knee", "hip"], "Quads, glutes",
   "Place the whole foot on the step and stand tall; lower slowly.")
 E("wall_sit", "Wall sit", "squat", [], ["knee"], "Quads",
@@ -63,6 +65,10 @@ E("db_bench", "Dumbbell bench press", "hpush", ["dumbbells", "bench"], ["shoulde
   "Elbows about 45° from the body, press up and slightly in.")
 E("chest_press", "Chest press machine", "hpush", ["chest_press"], ["shoulder"], "Chest, triceps",
   "Set the seat so handles are at mid-chest; press without locking out.")
+E("incline_db_press", "Incline dumbbell press", "hpush", ["dumbbells", "bench"], ["shoulder"], "Upper chest, triceps",
+  "Set the bench to about 30°, shoulder blades pinched, press up and slightly in.")
+E("chest_fly", "Cable chest fly", "hpush", ["cable"], ["shoulder"], "Chest",
+  "Soft elbows, bring the hands together in a wide arc, feel the stretch at the end.")
 E("floor_press", "Dumbbell floor press", "hpush", ["dumbbells"], ["shoulder"], "Chest, triceps",
   "Lie on the floor, elbows rest lightly on the floor between reps.")
 E("push_up", "Push-up", "hpush", [], ["wrist", "shoulder"], "Chest, triceps, core",
@@ -163,6 +169,7 @@ ALTS = {
     "box_squat": ["goblet_squat", "split_squat", "wall_sit", "glute_bridge"],
     "split_squat": ["goblet_squat", "step_up", "box_squat", "leg_press", "wall_sit"],
     "step_up": ["split_squat", "goblet_squat", "box_squat", "leg_press"],
+    "walking_lunge": ["split_squat", "step_up", "goblet_squat", "box_squat"],
     "wall_sit": ["box_squat", "glute_bridge"],
     "leg_extension": ["split_squat", "wall_sit", "goblet_squat", "box_squat"],
     "romanian_deadlift": ["db_rdl", "hip_thrust_db", "glute_bridge", "band_pull_through", "single_leg_bridge"],
@@ -176,6 +183,8 @@ ALTS = {
     "bench_press": ["chest_press", "db_bench", "floor_press", "push_up", "band_chest_press"],
     "db_bench": ["chest_press", "bench_press", "floor_press", "push_up", "band_chest_press"],
     "chest_press": ["db_bench", "floor_press", "bench_press", "push_up", "band_chest_press"],
+    "incline_db_press": ["db_bench", "chest_press", "floor_press", "push_up", "incline_push_up"],
+    "chest_fly": ["band_chest_press", "push_up", "floor_press", "incline_push_up"],
     "floor_press": ["push_up", "band_chest_press", "incline_push_up"],
     "push_up": ["incline_push_up", "floor_press", "band_chest_press", "chest_press"],
     "incline_push_up": ["push_up", "floor_press", "band_chest_press"],

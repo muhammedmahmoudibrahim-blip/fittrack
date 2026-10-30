@@ -1,4 +1,427 @@
 {
   "version": 1,
-  "plans": {}
+  "plans": {
+    "Me": {
+      "id": "2026-11",
+      "title": "Block 1: fat loss and strength",
+      "valid_from": "2026-11-02",
+      "valid_to": "2026-11-29",
+      "steps_goal": 10000,
+      "notes": "Goal: lose fat while keeping your muscle.\nLift Mon, Tue, Thu and Fri. Easy cardio Wed and Sat. Rest Sun.\nEffort: stop every set about 2 reps before failure.\nProgress: when you hit the top of the rep range on every set, add 2.5 kg (upper body) or 5 kg (legs) next time.\nWeek 4 (Nov 23-29) is lighter: 2 sets of each exercise at the same weight.\nSteps: build up to 10,000 a day, adding about 2,000 a week.\nFood: follow the Food tab targets. Aim for protein at all four meals and about 3 litres of water.\nRescan on Fri Nov 27 under the same conditions as the first scan, enter it under Progress, then use Coach > Copy my monthly report for block 2.",
+      "days": {
+        "Mon": {
+          "type": "strength",
+          "title": "Upper A",
+          "exercises": [
+            {
+              "key": "db_bench",
+              "sets": 3,
+              "reps": "6–10",
+              "rest": 120
+            },
+            {
+              "key": "seated_row",
+              "sets": 3,
+              "reps": "8–12",
+              "rest": 120
+            },
+            {
+              "key": "db_shoulder_press",
+              "sets": 3,
+              "reps": "8–12",
+              "rest": 90
+            },
+            {
+              "key": "lat_pulldown",
+              "sets": 3,
+              "reps": "8–12",
+              "rest": 90
+            },
+            {
+              "key": "lateral_raise",
+              "sets": 3,
+              "reps": "12–15",
+              "rest": 60
+            },
+            {
+              "key": "triceps_pushdown",
+              "sets": 2,
+              "reps": "10–15",
+              "rest": 60
+            }
+          ]
+        },
+        "Tue": {
+          "type": "strength",
+          "title": "Lower A",
+          "exercises": [
+            {
+              "key": "leg_press",
+              "sets": 3,
+              "reps": "8–12",
+              "rest": 120
+            },
+            {
+              "key": "romanian_deadlift",
+              "sets": 3,
+              "reps": "8–10",
+              "rest": 120,
+              "note": "The dumbbell version is fine."
+            },
+            {
+              "key": "walking_lunge",
+              "sets": 2,
+              "reps": "10 per leg",
+              "rest": 90
+            },
+            {
+              "key": "leg_curl",
+              "sets": 3,
+              "reps": "10–15",
+              "rest": 90
+            },
+            {
+              "key": "calf_raise",
+              "sets": 3,
+              "reps": "12–15",
+              "rest": 60,
+              "note": "Hold dumbbells or use a machine once bodyweight is easy."
+            },
+            {
+              "key": "plank",
+              "sets": 3,
+              "reps": "30–45 s",
+              "rest": 60
+            }
+          ]
+        },
+        "Wed": {
+          "type": "cardio",
+          "title": "Zone 2 cardio",
+          "exercises": [
+            {
+              "key": "bike",
+              "minutes": "35–45 min",
+              "note": "Easy pace. You should be able to speak in full sentences."
+            }
+          ]
+        },
+        "Thu": {
+          "type": "strength",
+          "title": "Upper B",
+          "exercises": [
+            {
+              "key": "incline_db_press",
+              "sets": 3,
+              "reps": "8–12",
+              "rest": 120
+            },
+            {
+              "key": "pull_up",
+              "sets": 3,
+              "reps": "8–12",
+              "rest": 120,
+              "note": "Use the assisted machine or a band. A neutral-grip pulldown works too."
+            },
+            {
+              "key": "db_row",
+              "sets": 3,
+              "reps": "10–12",
+              "rest": 90,
+              "note": "Chest-supported on an incline bench if you can."
+            },
+            {
+              "key": "chest_fly",
+              "sets": 2,
+              "reps": "12–15",
+              "rest": 60
+            },
+            {
+              "key": "face_pull",
+              "sets": 3,
+              "reps": "12–15",
+              "rest": 60
+            },
+            {
+              "key": "biceps_curl",
+              "sets": 2,
+              "reps": "10–15",
+              "rest": 60
+            }
+          ]
+        },
+        "Fri": {
+          "type": "strength",
+          "title": "Lower B",
+          "exercises": [
+            {
+              "key": "goblet_squat",
+              "sets": 3,
+              "reps": "8–12",
+              "rest": 120,
+              "note": "A hack squat machine is a good swap."
+            },
+            {
+              "key": "hip_thrust_db",
+              "sets": 3,
+              "reps": "8–12",
+              "rest": 120
+            },
+            {
+              "key": "split_squat",
+              "sets": 2,
+              "reps": "8–10 per leg",
+              "rest": 90,
+              "note": "Hold a support if you need balance."
+            },
+            {
+              "key": "leg_extension",
+              "sets": 3,
+              "reps": "12–15",
+              "rest": 60
+            },
+            {
+              "key": "calf_raise",
+              "sets": 3,
+              "reps": "12–15",
+              "rest": 60,
+              "note": "A seated calf machine is a good swap."
+            },
+            {
+              "key": "dead_bug",
+              "sets": 3,
+              "reps": "10–12",
+              "rest": 60
+            }
+          ]
+        },
+        "Sat": {
+          "type": "cardio",
+          "title": "Zone 2 cardio",
+          "exercises": [
+            {
+              "key": "treadmill",
+              "minutes": "40 min",
+              "note": "Incline walk. No running needed."
+            }
+          ]
+        },
+        "Sun": {
+          "type": "rest",
+          "title": "Rest and easy walk"
+        }
+      }
+    },
+    "Muhammed": {
+      "id": "2026-11",
+      "title": "Block 1: fat loss and strength",
+      "valid_from": "2026-11-02",
+      "valid_to": "2026-11-29",
+      "steps_goal": 10000,
+      "notes": "Goal: lose fat while keeping your muscle.\nLift Mon, Tue, Thu and Fri. Easy cardio Wed and Sat. Rest Sun.\nEffort: stop every set about 2 reps before failure.\nProgress: when you hit the top of the rep range on every set, add 2.5 kg (upper body) or 5 kg (legs) next time.\nWeek 4 (Nov 23-29) is lighter: 2 sets of each exercise at the same weight.\nSteps: build up to 10,000 a day, adding about 2,000 a week.\nFood: follow the Food tab targets. Aim for protein at all four meals and about 3 litres of water.\nRescan on Fri Nov 27 under the same conditions as the first scan, enter it under Progress, then use Coach > Copy my monthly report for block 2.",
+      "days": {
+        "Mon": {
+          "type": "strength",
+          "title": "Upper A",
+          "exercises": [
+            {
+              "key": "db_bench",
+              "sets": 3,
+              "reps": "6–10",
+              "rest": 120
+            },
+            {
+              "key": "seated_row",
+              "sets": 3,
+              "reps": "8–12",
+              "rest": 120
+            },
+            {
+              "key": "db_shoulder_press",
+              "sets": 3,
+              "reps": "8–12",
+              "rest": 90
+            },
+            {
+              "key": "lat_pulldown",
+              "sets": 3,
+              "reps": "8–12",
+              "rest": 90
+            },
+            {
+              "key": "lateral_raise",
+              "sets": 3,
+              "reps": "12–15",
+              "rest": 60
+            },
+            {
+              "key": "triceps_pushdown",
+              "sets": 2,
+              "reps": "10–15",
+              "rest": 60
+            }
+          ]
+        },
+        "Tue": {
+          "type": "strength",
+          "title": "Lower A",
+          "exercises": [
+            {
+              "key": "leg_press",
+              "sets": 3,
+              "reps": "8–12",
+              "rest": 120
+            },
+            {
+              "key": "romanian_deadlift",
+              "sets": 3,
+              "reps": "8–10",
+              "rest": 120,
+              "note": "The dumbbell version is fine."
+            },
+            {
+              "key": "walking_lunge",
+              "sets": 2,
+              "reps": "10 per leg",
+              "rest": 90
+            },
+            {
+              "key": "leg_curl",
+              "sets": 3,
+              "reps": "10–15",
+              "rest": 90
+            },
+            {
+              "key": "calf_raise",
+              "sets": 3,
+              "reps": "12–15",
+              "rest": 60,
+              "note": "Hold dumbbells or use a machine once bodyweight is easy."
+            },
+            {
+              "key": "plank",
+              "sets": 3,
+              "reps": "30–45 s",
+              "rest": 60
+            }
+          ]
+        },
+        "Wed": {
+          "type": "cardio",
+          "title": "Zone 2 cardio",
+          "exercises": [
+            {
+              "key": "bike",
+              "minutes": "35–45 min",
+              "note": "Easy pace. You should be able to speak in full sentences."
+            }
+          ]
+        },
+        "Thu": {
+          "type": "strength",
+          "title": "Upper B",
+          "exercises": [
+            {
+              "key": "incline_db_press",
+              "sets": 3,
+              "reps": "8–12",
+              "rest": 120
+            },
+            {
+              "key": "pull_up",
+              "sets": 3,
+              "reps": "8–12",
+              "rest": 120,
+              "note": "Use the assisted machine or a band. A neutral-grip pulldown works too."
+            },
+            {
+              "key": "db_row",
+              "sets": 3,
+              "reps": "10–12",
+              "rest": 90,
+              "note": "Chest-supported on an incline bench if you can."
+            },
+            {
+              "key": "chest_fly",
+              "sets": 2,
+              "reps": "12–15",
+              "rest": 60
+            },
+            {
+              "key": "face_pull",
+              "sets": 3,
+              "reps": "12–15",
+              "rest": 60
+            },
+            {
+              "key": "biceps_curl",
+              "sets": 2,
+              "reps": "10–15",
+              "rest": 60
+            }
+          ]
+        },
+        "Fri": {
+          "type": "strength",
+          "title": "Lower B",
+          "exercises": [
+            {
+              "key": "goblet_squat",
+              "sets": 3,
+              "reps": "8–12",
+              "rest": 120,
+              "note": "A hack squat machine is a good swap."
+            },
+            {
+              "key": "hip_thrust_db",
+              "sets": 3,
+              "reps": "8–12",
+              "rest": 120
+            },
+            {
+              "key": "split_squat",
+              "sets": 2,
+              "reps": "8–10 per leg",
+              "rest": 90,
+              "note": "Hold a support if you need balance."
+            },
+            {
+              "key": "leg_extension",
+              "sets": 3,
+              "reps": "12–15",
+              "rest": 60
+            },
+            {
+              "key": "calf_raise",
+              "sets": 3,
+              "reps": "12–15",
+              "rest": 60,
+              "note": "A seated calf machine is a good swap."
+            },
+            {
+              "key": "dead_bug",
+              "sets": 3,
+              "reps": "10–12",
+              "rest": 60
+            }
+          ]
+        },
+        "Sat": {
+          "type": "cardio",
+          "title": "Zone 2 cardio",
+          "exercises": [
+            {
+              "key": "treadmill",
+              "minutes": "40 min",
+              "note": "Incline walk. No running needed."
+            }
+          ]
+        },
+        "Sun": {
+          "type": "rest",
+          "title": "Rest and easy walk"
+        }
+      }
+    }
+  }
 }

@@ -38,6 +38,8 @@ function planCard(open){const p=myPlan();if(!p)return'';const late=p.valid_to&&i
 function ctx(){const u=U(),rep=u.reports.length?[...u.reports].sort((a,b)=>a.report_date<b.report_date?-1:1).pop():null;
   const since=addDays(iso(),-7),steps=Object.entries(u.checkins).filter(([d,c])=>d>=since&&c.steps!=null).map(([d,c])=>c.steps);
   const c=JSON.parse(B.context(JSON.stringify(u.profile),rep?JSON.stringify(rep):'',steps.length>=3?steps.reduce((a,b)=>a+b,0)/steps.length:null));
+  const pl=myPlan();if(pl&&pl.steps_goal&&c.targets){const b=+pl.steps_goal,a=steps.length>=3?steps.reduce((x,y)=>x+y,0)/steps.length:null;
+    c.targets.steps_goal=b;c.targets.steps_target=a==null?b:Math.min(b,Math.max(5000,Math.round((a+1500)/500)*500))} // coach plan can set the daily steps goal
   c.profile=u.profile;c.report=rep;return c}
 function ensurePlan(c){if(!c.targets)return null;const u=U();
   const sig=call('plan_sig',JSON.stringify(c.targets),JSON.stringify(u.profile),c.report.id);

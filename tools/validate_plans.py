@@ -25,6 +25,9 @@ def check(path):
         for f in ("valid_from", "valid_to"):
             if plan.get(f) and not re.fullmatch(r"\d{4}-\d\d-\d\d", plan[f]):
                 errs.append(f"{t} {f} must look like 2026-11-30")
+        sg = plan.get("steps_goal")
+        if sg is not None and (not isinstance(sg, int) or not 3000 <= sg <= 30000):
+            errs.append(f"{t} steps_goal must be a whole number between 3000 and 30000")
         days = plan.get("days")
         if not isinstance(days, dict) or not days:
             errs.append(f"{t} needs a 'days' object")

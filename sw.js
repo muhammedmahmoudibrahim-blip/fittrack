@@ -1,5 +1,5 @@
 // Offline cache. Everything is served from this site (the Python engine is bundled in /pyodide).
-const C='fittrack-static-v5';
+const C='fittrack-static-v6';
 const SHELL=['./','index.html','app.js','style.css','manifest.json','icon-192.png','icon-512.png',
  ...["back_squat", "band_chest_press", "band_curl", "band_face_pull", "band_lateral_raise", "band_pull_through", "band_pulldown", "band_pushdown", "band_row", "bench_dip", "bench_press", "biceps_curl", "bird_dog", "box_squat", "calf_raise", "cat_cow", "chest_press", "chin_tuck", "close_push_up", "db_bench", "db_rdl", "db_row", "db_shoulder_press", "dead_bug", "face_pull", "floor_press", "glute_bridge", "goblet_squat", "hamstring_walkout", "hanging_knee_raise", "hip_flexor_stretch", "hip_thrust_db", "incline_push_up", "lat_pulldown", "lateral_raise", "leg_curl", "leg_extension", "leg_press", "overhead_press", "pallof_press", "plank", "prone_ytw", "pull_up", "push_up", "reverse_crunch", "romanian_deadlift", "seated_row", "side_plank", "single_leg_bridge", "split_squat", "step_up", "towel_curl", "triceps_pushdown", "wall_angel", "wall_sit"].map(k=>'anim/'+k+'.gif'),
  'py/engine.py','py/workouts.py','py/foods.py','py/planner.py','py/coach.py','py/bridge.py'];

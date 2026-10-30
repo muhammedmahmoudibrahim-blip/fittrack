@@ -4,6 +4,7 @@ Claude writes each month's plan into `coach-plans.json`. The app fetches that fi
 keeps a copy for offline use, and shows the plan under **Train**, **Home** and **Coach** for the matching person.
 
 The key under `plans` must match the person's name in the app (top-right selector, case-insensitive).
+`steps_goal` (optional) replaces the goal's default daily steps; the Today and Coach tabs still ramp toward it from your recent average.
 Days that are not listed become rest days. Exercise `key`s must exist in `py/workouts.py`.
 
 ```json
@@ -16,6 +17,7 @@ Days that are not listed become rest days. Exercise `key`s must exist in `py/wor
       "valid_from": "2026-11-01",
       "valid_to": "2026-11-28",
       "notes": "Free text shown on the Train and Coach tabs.",
+      "steps_goal": 10000,
       "days": {
         "Mon": {"type": "strength", "title": "Lower A", "exercises": [
           {"key": "leg_press", "sets": 4, "reps": "8-10", "rest": 100, "weight_kg": 80, "note": "3 s down"}
