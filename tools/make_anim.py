@@ -173,6 +173,18 @@ def draw_rot(d, t):
     tip = pol(sh, 180 + f * 175, 62)                            # top arm opens like a book
     line(d, sh, tip, 11, 'white'); line(d, sh, tip, 8, ARM); dot(d, tip, 4, SKIN, ARM)
 
+
+# thoracic open-book rotation (warm-up)
+EXS['thoracic_rotation'] = dict(kind='rot')
+# doorway chest stretch (cool-down): forearm on the frame, step through and lean
+def door_prop(d, J, t):
+    x = 238
+    d.rectangle([x*S, 20*S, (x+14)*S, FLOOR*S], fill='#e2e8f0'); d.line([x*S, 20*S, x*S, FLOOR*S], fill=PROP, width=2*S)
+ex('doorway_chest_stretch', pin=('ankle_n', 200), ground=['toe_n', 'ankle_n', 'toe_f', 'ankle_f'],
+   A=dict(t=-90, tn=88, sn=92, tf=100, sf=95, an=0, fn=-90, af=0, ff=-90),
+   B=dict(t=-78, tn=98, sn=92, tf=52, sf=100, an=0, fn=-90, af=0, ff=-90),
+   prop=door_prop, label='Forearm on the frame, lean in gently')
+
 def render(key, t):
     e = EXS[key]; im = Image.new('RGB', (W*S, H*S), BG); d = ImageDraw.Draw(im)
     d.rectangle([0, FLOOR*S, W*S, H*S], fill=FLOORC)
